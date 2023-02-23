@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Article, NewsResponse, ArticlesByCategoryAndPage } from '../interfaces';
 import { map, Observable, of } from 'rxjs';
+import { storedArticlesByCategory } from '../data/mock-news';
 
 const apiKey = environment.apiKey;
 const apiUrl = environment.apiUrl;
@@ -13,7 +14,7 @@ const apiUrl = environment.apiUrl;
 })
 export class NewsService {
 
-  private articlesByCategoryAndPage: ArticlesByCategoryAndPage = {};
+  private articlesByCategoryAndPage: ArticlesByCategoryAndPage = storedArticlesByCategory as ArticlesByCategoryAndPage;
 
   constructor( private http: HttpClient ) { }
 
@@ -32,6 +33,9 @@ export class NewsService {
   }
 
   getTopHeadlinesByCategory( category: string, loadMore: boolean = false ): Observable<Article[]> {
+    // This line was set up due to problems with the free access API.
+    return of( this.articlesByCategoryAndPage[ category ].articles );
+
     if ( loadMore ) return this.getArticleByCategory( category );
 
     if ( this.articlesByCategoryAndPage[ category ] ) return of( this.articlesByCategoryAndPage[ category ].articles );
